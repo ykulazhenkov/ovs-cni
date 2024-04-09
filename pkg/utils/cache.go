@@ -26,7 +26,7 @@ import (
 
 var (
 	// DefaultCacheDir used for caching
-	DefaultCacheDir = "/tmp/ovscache"
+	DefaultCacheDir = "/var/ovscache"
 )
 
 // SaveCache takes in key as string and a json encoded struct Conf and save this Conf in cache dir
