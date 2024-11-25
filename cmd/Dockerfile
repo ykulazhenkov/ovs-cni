@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:stream9 as builder
+FROM quay.io/centos/centos:stream9 AS builder
 
 RUN mkdir /workdir
 WORKDIR /workdir
@@ -7,10 +7,16 @@ COPY go.mod .
 
 RUN dnf install -y wget
 
+# these variable are automatically set during the multiarch build by docker buildx
+ARG TARGETOS
+ARG TARGETARCH
+ENV TARGETOS=${TARGETOS:-linux}
+ENV TARGETARCH=${TARGETARCH:-amd64}
+
 RUN GO_VERSION=$(sed -En 's/^go +(.*)$/\1/p' go.mod) && \
-    wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
-    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
-    rm go${GO_VERSION}.linux-amd64.tar.gz
+    wget https://dl.google.com/go/go${GO_VERSION}.${TARGETOS}-${TARGETARCH}.tar.gz && \
+    tar -C /usr/local -xzf go${GO_VERSION}.${TARGETOS}-${TARGETARCH}.tar.gz && \
+    rm go${GO_VERSION}.${TARGETOS}-${TARGETARCH}.tar.gz
 
 ENV PATH /usr/local/go/bin:$PATH
 
